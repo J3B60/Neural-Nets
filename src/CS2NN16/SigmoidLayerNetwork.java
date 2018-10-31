@@ -25,11 +25,18 @@ public class SigmoidLayerNetwork extends LinearLayerNetwork {
 	
 	/**
 	 * calcOutputs of neuron
+	 * #################################
 	 * @param nInputs	
 	 * 
 	 */
 	protected void calcOutputs(ArrayList<Double> nInputs) {
 		// you write this
+		double output;
+		super.calcOutputs(nInputs);
+		for (int i = 0; i < super.outputs.size(); i++){
+			output = sigmoid(outputs.get(i));
+			super.outputs.set(i, output);
+		}
 	}
 	/**
 	 * find deltas

@@ -89,25 +89,30 @@ public class LinearLayerNetwork {
 	}
 	
 	/**
-	 * find deltas 
+	 * find deltas using list of errors. Copies the error list into a list of deltas
 	 *	@param errors	
 	 */
 	protected void findDeltas(ArrayList<Double> errors) {
 		// write code to copy each error into delta list
+		for (int ct = 0; ct<errors.size(); ct++){//Loop to error arraylist size
+			deltas.set(ct, errors.get(ct));//Copy so no reference
+		}
 	}	
 	
 	/**
 	 * return index into weights array list of the wWeight'th weight of the wNeuron'th neuron
+	 * since the array is one dimensional where every 3 weights belong to 1 neuron
 	 * @param wNeuron	
 	 * @param wWeight	
 	 * @return			 
 	 */
 	private int weightIndex (int wNeuron, int wWeight) {
-		return 0;			// change this
+		return 3*wNeuron + wWeight;			// change this, There are 3 weights for each Neuron, so skips every 3 weights to get to specific neuron then finds the weight no -1 since both Nueron and weights start from 0
+//		return 0;
 	}
 	
 	/**
-	 * change a given weight 
+	 * change a given weight by the selected neuron and weight and calculating the change in weight and then adding to current weight
 	 * @param wNeuron		
 	 * @param wWeight		
 	 * @param theIn			
@@ -116,16 +121,29 @@ public class LinearLayerNetwork {
 	 */
 	private void changeOneWeight(int wNeuron, int wWeight, double theIn, double learnRate, double momentum) {
 		// first calculate index of weight, then the change in weight, then change the weight
+		int CalculatedWeightIndex = weightIndex(wNeuron, wWeight); //Find the correct weight from correct neuron
+		changeInWeights.set(CalculatedWeightIndex, theIn * deltas.get(wNeuron) * learnRate + changeInWeights.get(CalculatedWeightIndex) * momentum);//Calculate the Change in weight
+		weights.set(CalculatedWeightIndex, weights.get(CalculatedWeightIndex) +  changeInWeights.get(CalculatedWeightIndex));//Set new weight by adding change in weight to original
+		
 	}
 	
 	/**
-	 * change all the weights in layer
+	 * change all the weights in layer. This method goes through each weight in each neuron and changes its weight
+	 * by calling the ChangeOneWeight function. Bias weight is set to 1
 	 * @param ins		
 	 * @param learnRate	
 	 * @param momentum	
 	 */
 	protected void changeAllWeights(ArrayList<Double> ins, double learnRate, double momentum) {
 		// you write this
+		int numWeightsEachNeuron = numInputs+1;
+		double theIn; //The input as a double
+		for (int nct = 0; nct < numNeurons; nct++){ //For each neuron
+			for (int wct = 0; wct < numWeightsEachNeuron; wct++){ //For each weight of each neuron
+				if (wct == 0) theIn =1; else theIn = ins.get(wct -1);// if the bias then 1 else get weight from the neuron
+				changeOneWeight(nct, wct, theIn, learnRate, momentum);//pass information to change each weight
+			}
+		}
 	}
 	
 	/**
@@ -264,7 +282,7 @@ public class LinearLayerNetwork {
 		LN.doInitialise();
 		System.out.println(LN.doPresent());
 		System.out.println("Weights " + LN.getWeights());
-		System.out.println(LN.doLearn(7,  0.2,  0.1));
+		System.out.println(LN.doLearn(10,  0.1,  0.3));
 		System.out.println(LN.doPresent());
 		System.out.println("Weights " + LN.getWeights());
 		
