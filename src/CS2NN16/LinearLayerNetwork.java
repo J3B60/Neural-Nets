@@ -194,12 +194,17 @@ public class LinearLayerNetwork {
 		return weights.size();
 	}
 	/**
-	 * return all the weights in the layer as a string each separated by spaces
+	 * return all the weights in the layer to 5 decimal places
+	 * as a string each separated by spaces. Used to output to console
 	 * @return 
 	 */
 	public String getWeights() {
 		String s = "";									// set string to empty
 				// add code here
+		for (int ct = 0; ct<weights.size(); ct++) {//Loop from 0 until end of weights Arraylist Note: ct used for consistency with other code
+			s += String.format("%.5f", weights.get(ct)) + " ";//Add to s weight to 5 decimal places
+		}
+			
 		return s;										// return the result
 	}
 	/**
