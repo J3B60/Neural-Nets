@@ -90,7 +90,7 @@ public class LinearLayerNetwork {
 	
 	/**
 	 * find deltas using list of errors. Copies the error list into a list of deltas
-	 *	@param errors	
+	 *	@param errors	error ArrayList from the dataset
 	 */
 	protected void findDeltas(ArrayList<Double> errors) {
 		// write code to copy each error into delta list
@@ -101,10 +101,10 @@ public class LinearLayerNetwork {
 	
 	/**
 	 * return index into weights array list of the wWeight'th weight of the wNeuron'th neuron
-	 * since the array is one dimensional where every 3 weights belong to 1 neuron
-	 * @param wNeuron	
-	 * @param wWeight	
-	 * @return			 
+	 * since the array is one dimensional where every 3 weights belong to 1 neuron. 
+	 * @param wNeuron The selected Neuron - should be called for all neurons	
+	 * @param wWeight The Selected Weight - should be called for all weights
+	 * @return	Returns the position in the array the neuron's weight is located
 	 */
 	private int weightIndex (int wNeuron, int wWeight) {
 		return 3*wNeuron + wWeight;			// change this, There are 3 weights for each Neuron, so skips every 3 weights to get to specific neuron then finds the weight no -1 since both Nueron and weights start from 0
@@ -113,11 +113,13 @@ public class LinearLayerNetwork {
 	
 	/**
 	 * change a given weight by the selected neuron and weight and calculating the change in weight and then adding to current weight
-	 * @param wNeuron		
-	 * @param wWeight		
-	 * @param theIn			
-	 * @param learnRate		
-	 * @param momentum		
+	 * Arguments are the currently selected Neuron number, selected weights number, theInput and from dolearn, the Learnrate and momentum. This function should
+	 * be called for all neurons and weights
+	 * @param wNeuron	Currently selected Neuron Number - should be called for all Neurons
+	 * @param wWeight	Currently selected weight Number - should be called for all weights
+	 * @param theIn		The Input from dataset
+	 * @param learnRate	The learnrate from dolearn
+	 * @param momentum	The momentum from doLearn
 	 */
 	private void changeOneWeight(int wNeuron, int wWeight, double theIn, double learnRate, double momentum) {
 		// first calculate index of weight, then the change in weight, then change the weight
@@ -129,14 +131,15 @@ public class LinearLayerNetwork {
 	
 	/**
 	 * change all the weights in layer. This method goes through each weight in each neuron and changes its weight
-	 * by calling the ChangeOneWeight function. Bias weight is set to 1
+	 * by calling the ChangeOneWeight function. Bias weight is set to 1. Arguments
+	 * are an arraylist of inputs from the dataset. Learnrate and momentum is from doLearn.
 	 * @param ins		
 	 * @param learnRate	
 	 * @param momentum	
 	 */
 	protected void changeAllWeights(ArrayList<Double> ins, double learnRate, double momentum) {
 		// you write this
-		int numWeightsEachNeuron = numInputs+1;
+		int numWeightsEachNeuron = numInputs+1; //Weights equal to Number of inputs +1 because of bias weight
 		double theIn; //The input as a double
 		for (int nct = 0; nct < numNeurons; nct++){ //For each neuron
 			for (int wct = 0; wct < numWeightsEachNeuron; wct++){ //For each weight of each neuron
@@ -214,7 +217,7 @@ public class LinearLayerNetwork {
 	/**
 	 * return all the weights in the layer to 5 decimal places
 	 * as a string each separated by spaces. Used to output to console
-	 * @return 
+	 * @return String of all weights in 0.00000 format
 	 */
 	public String getWeights() {
 		String s = "";									// set string to empty
