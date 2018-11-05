@@ -81,18 +81,20 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 		nextLayer.setWeights(rgen);		// and in next
 	}
 	/**
-	 * return how many weights there are in the network
-	 * @return
+	 * return how many weights there are in the layered network
+	 * @return Number of weights in the layered network
 	 */
 	public int numWeights() {
-		return 0; 		// change this
+		// change this
+		return super.numWeights() + nextLayer.numWeights();	//Outputs the same number of weights as input	
 	}
 	/**
 	 * return the weights in the whole network as a string
 	 * @return the string
 	 */
 	public String getWeights() {
-		return "";		// change this
+		// change this
+		return "" + super.getWeights() + nextLayer.getWeights(); //Creates slightly different output than input due to rounding
 	}
 	/**
 	 * initialise network before running
