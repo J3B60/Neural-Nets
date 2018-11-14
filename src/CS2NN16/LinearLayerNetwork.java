@@ -107,7 +107,7 @@ public class LinearLayerNetwork {
 	 * @return	Returns the position in the array the neuron's weight is located
 	 */
 	private int weightIndex (int wNeuron, int wWeight) {
-		return 3*wNeuron + wWeight;			// change this, There are 3 weights for each Neuron, so skips every 3 weights to get to specific neuron then finds the weight no -1 since both Nueron and weights start from 0
+		return (numInputs+1)*wNeuron + wWeight;			// change this, There are 3 weights for each Neuron, so skips every 3 weights to get to specific neuron then finds the weight no -1 since both Neuron and weights start from 0//CHANGED TO numInuts rather than 3 (because num of weights is not constant)
 //		return 0;
 	}
 	
