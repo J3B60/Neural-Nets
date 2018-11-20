@@ -28,29 +28,39 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 		nextLayer = nextL;						// store link to next layer
 	}
 	/**
-	 * calcOutputs of network
-	 * @param nInputs	
+	 * calcOutputs of network. Find the Outputs of Current Layer then feed 
+	 * to Next Layer to calculate its own outputs.
+	 * @param nInputs	Passed to Current Layer
 	 * 
 	 */
 	protected void calcOutputs(ArrayList<Double> nInputs) {
 		// you write code here
+		super.calcOutputs(nInputs); //calculate outputs using sigmoid calcOutputs function
+		nextLayer.calcOutputs(super.outputs);// calculate nextLayers Outputs using current layers
 	}
 	
 	/**
-	 * outputsToDataSet of the network to the data set
-	 * @param ct	
-	 * @param d		
+	 * outputsToDataSet of the network to the data set. Similar to LinearLayerNetwork
+	 * function of same name. However pass next layers outputs.
+	 * @param ct	selected item in the dataset
+	 * @param d		the dataset
 	 */
 	protected void outputsToDataSet (int ct, DataSet d) {
 		// you write code here ... note DataSet wants output(s) of final layer only
+		d.storeOutputs(ct, nextLayer.outputs); //store next Layers outputs
 	}
 	
 	/**
-	 * find the deltas in the whole network 
-	 *	@param errors 	
+	 * find the deltas in the whole network. First by finding deltas of next 
+	 * layer by using the errors arraylist. Then find 
+	 * deltas of this layer by calculating the errors from the next layer.
+	 *	@param errors 	Passed to Next Layer
 	 */
 	protected void findDeltas(ArrayList<Double> errors) {
 		// you write this
+		nextLayer.findDeltas(errors);
+		super.findDeltas(nextLayer.weightedDeltas());
+		
 	}
 	
 	/**
@@ -89,7 +99,8 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 		return super.numWeights() + nextLayer.numWeights();	//Outputs the same number of weights as input	
 	}
 	/**
-	 * return the weights in the whole network as a string
+	 * return the weights in the whole network as a string. Combine 
+	 * weights from current layer string output with the next layer output
 	 * @return the string
 	 */
 	public String getWeights() {
@@ -114,7 +125,7 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 		MLN.doInitialise();
 		System.out.println(MLN.doPresent());
 		System.out.println("Weights " + MLN.getWeights());
-		System.out.println(MLN.doLearn(2000, 0.5,  0.8));
+		System.out.println(MLN.doLearn(2000, 0.4,  0.8));
 		System.out.println(MLN.doPresent());
 		System.out.println("Weights " + MLN.getWeights());
 	}

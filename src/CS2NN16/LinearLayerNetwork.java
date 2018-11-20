@@ -183,6 +183,17 @@ public class LinearLayerNetwork {
 	public ArrayList<Double> weightedDeltas() {
 		ArrayList<Double> wtDeltas = new ArrayList<Double>();	// create array for answer
 			// now add suitable 'errors'
+//		for (int neuron = 0; neuron < numNeurons; neuron++) { //Considering the layout of arraylist where neurons are grouped 
+//			for (int weight = 0; weight < numInputs; weight++) { //Go through weights -1 (this is excluding bias weight)
+//				wtDeltas.set((numInputs+1)*neuron + weight, deltas.get(neuron) * weights.get((numInputs+1)*neuron + weight +1)); //Adjusted weight index to skip bias weight, starts at correct neuron and finds correct weight index and returns weight to be multiplied by delta0 as in script 
+//			}
+//		}
+		int neuron = 0;
+		wtDeltas.clear();
+		for (int ct = 0; ct < deltas.size(); ct++) {
+			wtDeltas.add(0.0);
+		}
+		wtDeltas.set(neuron, deltas.get(0) * weights.get(neuron +1));
 		return wtDeltas;
 	}
 	
