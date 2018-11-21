@@ -58,19 +58,21 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 	 */
 	protected void findDeltas(ArrayList<Double> errors) {
 		// you write this
-		nextLayer.findDeltas(errors);
-		super.findDeltas(nextLayer.weightedDeltas());
-		
+		nextLayer.findDeltas(errors); //Deltas of nextlayer
+		super.findDeltas(nextLayer.weightedDeltas());//Deltas of current layer using errors calculated using nextlayer's info
 	}
 	
 	/**
-	 * change all the weights in the network, in this layer and the next
+	 * change all the weights in the network, in this layer and the next. Using outputs from current layer as 
+	 * Inputs to the nextLayer
 	 * @param ins		array list of the inputs to the neuron
 	 * @param learnRate	learning rate: change is learning rate * input * delta
 	 * @param momentum	momentum constant : change is also momentun * change in weight last time
 	 */
 	protected void changeAllWeights(ArrayList<Double> ins, double learnRate, double momentum) {
 		// you write this
+		super.changeAllWeights(ins, learnRate, momentum);//input all args
+		nextLayer.changeAllWeights(super.outputs, learnRate, momentum);//Output from current as input
 	}	
 	
 	/**
@@ -125,7 +127,7 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 		MLN.doInitialise();
 		System.out.println(MLN.doPresent());
 		System.out.println("Weights " + MLN.getWeights());
-		System.out.println(MLN.doLearn(2000, 0.4,  0.8));
+		System.out.println(MLN.doLearn(2000, 0.4,  0.7));//EP,LR,Mo
 		System.out.println(MLN.doPresent());
 		System.out.println("Weights " + MLN.getWeights());
 	}
@@ -139,7 +141,7 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 			MLN.doInitialise();
 			System.out.println(MLN.doPresent());
 			System.out.println("Weights " + MLN.getWeights());
-			System.out.println(MLN.doLearn(2000,  0.5,  0.8));
+			System.out.println(MLN.doLearn(1000,  0.3,  0.5));
 			System.out.println(MLN.doPresent());
 			System.out.println("Weights " + MLN.getWeights());
 		
@@ -165,8 +167,8 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		TestXOR();				// test MLP on the XOR problem
-	//	TestOther();			// test MLP on the other problem
+	//TestXOR();				// test MLP on the XOR problem
+	TestOther();			// test MLP on the other problem
 	//	TestThree();			// test that have 3 hidden layers
 	}
 

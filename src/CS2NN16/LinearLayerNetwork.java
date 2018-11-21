@@ -176,24 +176,28 @@ public class LinearLayerNetwork {
 	
 	/**
 	 * Calculate the errors in the previous layer, being the deltas in this layer * associated weights
-	 * this is used in the back propagation algorithm
+	 * this is used in the back propagation algorithm. For each neuron, multiply the neurons delta by each weight and
+	 * feed this to hiddenlayer as errors
 	 * 
-	 * @return	arraylist of errors
+	 * @return	arraylist of errors passed hidden layer
 	 */
 	public ArrayList<Double> weightedDeltas() {
 		ArrayList<Double> wtDeltas = new ArrayList<Double>();	// create array for answer
 			// now add suitable 'errors'
-//		for (int neuron = 0; neuron < numNeurons; neuron++) { //Considering the layout of arraylist where neurons are grouped 
-//			for (int weight = 0; weight < numInputs; weight++) { //Go through weights -1 (this is excluding bias weight)
-//				wtDeltas.set((numInputs+1)*neuron + weight, deltas.get(neuron) * weights.get((numInputs+1)*neuron + weight +1)); //Adjusted weight index to skip bias weight, starts at correct neuron and finds correct weight index and returns weight to be multiplied by delta0 as in script 
-//			}
-//		}
-		int neuron = 0;
-		wtDeltas.clear();
-		for (int ct = 0; ct < deltas.size(); ct++) {
+		wtDeltas.clear();//Initialise 
+		for (int ct = 0; ct < numInputs; ct++) { //Setup Arraylist similar to how Constructor does (not including the bias), numInputs = num neurons in hidden layer
 			wtDeltas.add(0.0);
 		}
-		wtDeltas.set(neuron, deltas.get(0) * weights.get(neuron +1));
+		int index = 0;//index in 
+		double ans =0;//store answer for wtDelta arraylist
+		for (int weight = 0; weight<numInputs; weight++){ //Eg(for first weight run) First weight
+			ans=0;//Reset ans for next hidden layer neuron delta
+			for (int neuron = 0; neuron<numNeurons; neuron++){//Eg Of each neuron
+				ans += deltas.get(neuron) * weights.get(weightIndex(neuron, weight+1));//Sum to make delta, skip bias
+			}
+			wtDeltas.set(index, ans);//set in weighted deltas arraylist
+			index++;//Position in weighted deltas arraylist
+		}
 		return wtDeltas;
 	}
 	
