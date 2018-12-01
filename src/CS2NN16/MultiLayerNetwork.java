@@ -47,7 +47,8 @@ public class MultiLayerNetwork extends SigmoidLayerNetwork {
 	 */
 	protected void outputsToDataSet (int ct, DataSet d) {
 		// you write code here ... note DataSet wants output(s) of final layer only
-		d.storeOutputs(ct, nextLayer.outputs); //store next Layers outputs
+		//d.storeOutputs(ct, nextLayer.outputs); //store next Layers outputs OLD CODE
+		nextLayer.outputsToDataSet(ct, d); //New from feedback
 	}
 	
 	/**

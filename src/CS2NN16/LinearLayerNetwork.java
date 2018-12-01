@@ -185,12 +185,13 @@ public class LinearLayerNetwork {
 		ArrayList<Double> wtDeltas = new ArrayList<Double>();	// create array for answer
 			// now add suitable 'errors'
 		wtDeltas.clear();//Initialise 
-		for (int ct = 0; ct < numInputs; ct++) { //Setup Arraylist similar to how Constructor does (not including the bias), numInputs = num neurons in hidden layer
-			wtDeltas.add(0.0);
-		}
+//		for (int ct = 0; ct < numInputs; ct++) { //Setup Arraylist similar to how Constructor does (not including the bias), numInputs = num neurons in hidden layer
+//			wtDeltas.add(0.0);
+//		}
 		int index = 0;//index in 
 		double ans =0;//store answer for wtDelta arraylist
 		for (int weight = 0; weight<numInputs; weight++){ //Eg(for first weight run) First weight
+			wtDeltas.add(0.0);
 			ans=0;//Reset ans for next hidden layer neuron delta
 			for (int neuron = 0; neuron<numNeurons; neuron++){//Eg Of each neuron
 				ans += deltas.get(neuron) * weights.get(weightIndex(neuron, weight+1));//Sum to make delta, skip bias
