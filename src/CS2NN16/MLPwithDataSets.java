@@ -73,8 +73,32 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 		if (validationData==null) s = super.doLearn(numEpochs, lRate, momentum);
 					// if no validation set, just use normal doLearn
 		else {
-			s = super.doLearn(numEpochs, lRate, momentum); 
+//			s = super.doLearn(numEpochs, lRate, momentum); 
 			// delete the above and write and comment code to use validation
+			//DRAT IDEA
+			if (validationData.getSSE() > PreviousValidationDataSSE) {
+				return "";
+			}
+			else {
+				double sumOfSSE = 0;
+				int epochsSoFar = trainData.sizeSSELog(); //Maybe, maybe not (to)
+				for (int ct = 1; ct<=numEpochs; ct++) {//?Maybe or use the SSE one
+					super.learnDataSet(trainData, lRate, momentum);
+					super.learnDataSet(validationData, lRate, momentum);
+					s = s + addEpochString(ct+epochsSoFar) +  " : " +validationData.dataAnalysis() + "\n";
+					sumOfSSE = sumOfSSE + validationData.getSSE().get(ct);
+					if (ct % 10 == 0) {
+						if (validationData.getSSE() > PreviousValidationDataSSE) {
+							//StopLearning
+							return s + "Stop Learning at " + String.valueOf(ct) + " Epoch"; 
+						}
+						else {
+							//sumOfSSESavedInThisClass = sumOfSSE
+							sumOfSSE = 0;
+						}
+					}
+				}
+			}
 			
 		}
 		return s;											// return string showing learning
