@@ -3,6 +3,8 @@
  */
 package CS2NN16;
 
+import java.util.ArrayList;
+
 /**
  * @author shsmchlr
  * Class of a multi layer perceptron network with training, unseen and validation data sets
@@ -16,6 +18,9 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 	
 	protected DataSet unseenData;			// unseen data set
 	protected DataSet validationData;		// validation set : is set to null if that set is not being used
+	private double previousValidationDataSSE = 1000;//A number above the neural nets internal 
+	private boolean validationSSEhasRisen = false;
+	private ArrayList<Double> lastTenValidationSSE;
 	
 	/**
 	 * Constructor for the MLP
@@ -39,6 +44,11 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 	 */
 	public void doInitialise() {
 		super.doInitialise();
+		lastTenValidationSSE = new ArrayList<Double>();
+		lastTenValidationSSE.clear();
+		for (int i = 0; i < 10; i++){//Setup empty array
+			lastTenValidationSSE.add(0.0);
+		}
 		// you may need extra initialisation here, both of the other data and any other variables
 	}
 	/**
@@ -75,31 +85,42 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 		else {
 //			s = super.doLearn(numEpochs, lRate, momentum); 
 			// delete the above and write and comment code to use validation
-			//DRAT IDEA
-			if (validationData.getSSE() > PreviousValidationDataSSE) {
-				return "";
+			if (validationSSEhasRisen) {//No learning
+				return "";//nothing
 			}
 			else {
-				double sumOfSSE = 0;
-				int epochsSoFar = trainData.sizeSSELog(); //Maybe, maybe not (to)
-				for (int ct = 1; ct<=numEpochs; ct++) {//?Maybe or use the SSE one
-					super.learnDataSet(trainData, lRate, momentum);
-					super.learnDataSet(validationData, lRate, momentum);
-					s = s + addEpochString(ct+epochsSoFar) +  " : " +validationData.dataAnalysis() + "\n";
-					sumOfSSE = sumOfSSE + validationData.getSSE().get(ct);
-					if (ct % 10 == 0) {
-						if (validationData.getSSE() > PreviousValidationDataSSE) {
+				double sumOfSSE = 0; //The sum of previous 10 SSEs
+				double sumOfSSEAvg = 0; //Added another variable to keep things categorised for now, (if I ever need to refer back to sumOfSSE otherwise I could just write over the variable)
+				int epochsSoFar = trainData.sizeSSELog(); //Maybe (to replace ct <= numEpochs)?
+				for (int ct = 1; ct<=numEpochs; ct++) {//?Maybe or use the SSE one//Go through epochs and learn just like original doLearn
+					super.learnDataSet(trainData, lRate, momentum);//"AdaptNetwork" -> learnDataSet//Learning with trainData
+					super.doPresent();//Pass the validationData//doPresent
+					if (numEpochs<20 || ct % (numEpochs/10) == 0) // print appropriate number of times just like original doLearn
+						s = s + addEpochString(ct+epochsSoFar) + " : " + trainData.dataAnalysis()+"\n";//Print to Interface
+//					sumOfSSE = sumOfSSE + validationData.getSSE().get(ct);//Old, needs loop to check through all validationData SSEs
+					lastTenValidationSSE.set((ct-1)%10, validationData.getSSE().get(0));//Add the current validationSSE to the arraylist holding the 10 previous SSEs 
+					if (ct % 10 == 0) {//Change this to epochsSoFar maybe?//Checks if the at epoch is a multiple of 10
+						for (int cts = 0; cts < 10; cts++){ //Go through all items in arraylist
+							sumOfSSE = sumOfSSE + lastTenValidationSSE.get(cts);//Sum of previous SSEs
+						}
+						sumOfSSEAvg = sumOfSSE/10;//Average of the 10 SSEs
+//						if (ct == 10){//If its the first run then just set the average to be equal to the previousSSE then the next if statement shouldn't run
+//							previousValidationDataSSE = sumOfSSEAvg;//Not good, this will run for every new doLearn when ct==10
+//						}
+						if (sumOfSSEAvg > previousValidationDataSSE) {//If SSE has risen
 							//StopLearning
-							return s + "Stop Learning at " + String.valueOf(ct) + " Epoch"; 
+							validationSSEhasRisen = true;//Prevents else section of doLearn
+							return s + "Stop Learning after " + String.valueOf(ct) + " epochs\n"; //Output to Interface the stopped Epoch
 						}
 						else {
 							//sumOfSSESavedInThisClass = sumOfSSE
-							sumOfSSE = 0;
+							previousValidationDataSSE = sumOfSSEAvg;
+							sumOfSSE = 0;//Reset
+							sumOfSSEAvg = 0;
 						}
 					}
 				}
 			}
-			
 		}
 		return s;											// return string showing learning
 	}
