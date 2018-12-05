@@ -110,7 +110,7 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 						if (sumOfSSEAvg > previousValidationDataSSE) {//If SSE has risen
 							//StopLearning
 							validationSSEhasRisen = true;//Prevents else section of doLearn
-							return s + "Stop Learning after " + String.valueOf(ct) + " epochs\n"; //Output to Interface the stopped Epoch
+							return s + "Stop Learning after " + String.valueOf(epochsSoFar+ct) + " epochs\n"; //Output to Interface the stopped Epoch
 						}
 						else {
 							//sumOfSSESavedInThisClass = sumOfSSE
