@@ -18,9 +18,9 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 	
 	protected DataSet unseenData;			// unseen data set
 	protected DataSet validationData;		// validation set : is set to null if that set is not being used
-	private double previousValidationDataSSE = 1000;//A number above the neural nets internal 
-	private boolean validationSSEhasRisen = false;
-	private ArrayList<Double> lastTenValidationSSE;
+	private double previousValidationDataSSE;//Holds previous learn run validation SSE for comparison against the current SSE 
+	private boolean validationSSEhasRisen; //For If condition, to prevent more learning
+	private ArrayList<Double> lastTenValidationSSE; //Holds previous 10 SSEs for the validationDataSet
 	
 	/**
 	 * Constructor for the MLP
@@ -41,15 +41,18 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 
 	/** 
 	 * initialise network before learning ...
+	 * Including some setup of variables for the doLearn Method
 	 */
 	public void doInitialise() {
 		super.doInitialise();
-		lastTenValidationSSE = new ArrayList<Double>();
-		lastTenValidationSSE.clear();
-		for (int i = 0; i < 10; i++){//Setup empty array
-			lastTenValidationSSE.add(0.0);
-		}
 		// you may need extra initialisation here, both of the other data and any other variables
+		lastTenValidationSSE = new ArrayList<Double>();//Initialise arraylist
+		lastTenValidationSSE.clear();//Clear just in case errors happen
+		for (int i = 0; i < 10; i++){//Setup empty array
+			lastTenValidationSSE.add(0.0);//Setup of arraylist
+		}
+		validationSSEhasRisen = false;//Start Default with "SSE has not risen"
+		previousValidationDataSSE = 1000;//Default value is set to a value which is beyond SSE range. This allows for the first run when there is nothing to compare to, to continue to else condition
 	}
 	/**
 	 * present the data to the set and return a String describing results
@@ -94,18 +97,18 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 				int epochsSoFar = trainData.sizeSSELog(); //Maybe (to replace ct <= numEpochs)?
 				for (int ct = 1; ct<=numEpochs; ct++) {//?Maybe or use the SSE one//Go through epochs and learn just like original doLearn
 					super.learnDataSet(trainData, lRate, momentum);//"AdaptNetwork" -> learnDataSet//Learning with trainData
-					super.doPresent();//Pass the validationData//doPresent
+					System.out.println(doPresent());//Pass the validationData//doPresent//dont need the string here
 					if (numEpochs<20 || ct % (numEpochs/10) == 0) // print appropriate number of times just like original doLearn
-						s = s + addEpochString(ct+epochsSoFar) + " : " + trainData.dataAnalysis()+"\n";//Print to Interface
+						s = s + addEpochString(ct+epochsSoFar) + " : Train " + trainData.dataAnalysis() + " : Unseen " + unseenData.dataAnalysis() + " : Valid " + validationData.dataAnalysis() + "\n";//Print to Interface
 //					sumOfSSE = sumOfSSE + validationData.getSSE().get(ct);//Old, needs loop to check through all validationData SSEs
-					lastTenValidationSSE.set((ct-1)%10, validationData.getSSE().get(0));//Add the current validationSSE to the arraylist holding the 10 previous SSEs 
+					lastTenValidationSSE.set((ct-1)%10, validationData.getTotalSSE());//Add the current validationSSE to the arraylist holding the 10 previous SSEs 
 					if (ct % 10 == 0) {//Change this to epochsSoFar maybe?//Checks if the at epoch is a multiple of 10
 						for (int cts = 0; cts < 10; cts++){ //Go through all items in arraylist
 							sumOfSSE = sumOfSSE + lastTenValidationSSE.get(cts);//Sum of previous SSEs
 						}
 						sumOfSSEAvg = sumOfSSE/10;//Average of the 10 SSEs
-//						if (ct == 10){//If its the first run then just set the average to be equal to the previousSSE then the next if statement shouldn't run
-//							previousValidationDataSSE = sumOfSSEAvg;//Not good, this will run for every new doLearn when ct==10
+//						if (previousValidationDataSSE == 0){//If its the first run then just set the average to be equal to the previousSSE then the next if statement shouldn't run
+//							previousValidationDataSSE = sumOfSSEAvg;//First Setting of the previous validationSet
 //						}
 						if (sumOfSSEAvg > previousValidationDataSSE) {//If SSE has risen
 							//StopLearning
@@ -114,7 +117,7 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 						}
 						else {
 							//sumOfSSESavedInThisClass = sumOfSSE
-							previousValidationDataSSE = sumOfSSEAvg;
+							previousValidationDataSSE = sumOfSSEAvg;//New previousValidationDataSSE
 							sumOfSSE = 0;//Reset
 							sumOfSSEAvg = 0;
 						}
