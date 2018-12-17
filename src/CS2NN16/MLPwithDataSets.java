@@ -101,7 +101,7 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 					super.learnDataSet(trainData, lRate, momentum);//"AdaptNetwork" -> learnDataSet//Learning with trainData
 					//System.out.println(doPresent());//Pass the validationData//doPresent//dont need the string here
 					doPresent();//Modified to not show all outputs to console (Less work for cpu)
-					//presentDataSet(validationData);//This is what RJM suggests but he has not seen my doPresent, so I'll keep mine which presents info for all three sets (otherwise I only see Training and validation SSE changing but with mine I can see the SSE of the unseen dataset just as extra Info)
+					//presentDataSet(validationData);//This is what RJM suggests but he has not seen my doPresent, so I'll keep mine which presents info for all three sets (otherwise I only see Training and validation SSE changing but with mine I can see the SSE of the unseen dataset just as extra Info) Not used
 					if (numEpochs<20 || ct % (numEpochs/10) == 0) // print appropriate number of times just like original doLearn
 						s = s + addEpochString(ct+epochsSoFar) + " : Train " + trainData.dataAnalysis() + " : Unseen " + unseenData.dataAnalysis() + " : Valid " + validationData.dataAnalysis() + "\n";//Print to Interface
 //					sumOfSSE = sumOfSSE + validationData.getSSE().get(ct);//Old, needs loop to check through all validationData SSEs
