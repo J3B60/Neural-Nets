@@ -45,6 +45,8 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 	 */
 	public void doInitialise() {
 		super.doInitialise();
+		unseenData.clearSSELog();
+		validationData.clearSSELog();
 		// you may need extra initialisation here, both of the other data and any other variables
 		lastTenValidationSSE = new ArrayList<Double>();//Initialise arraylist
 		lastTenValidationSSE.clear();//Clear just in case errors happen
@@ -97,14 +99,16 @@ public class MLPwithDataSets extends MultiLayerNetwork {
 				int epochsSoFar = trainData.sizeSSELog(); //Maybe (to replace ct <= numEpochs)?
 				for (int ct = 1; ct<=numEpochs; ct++) {//?Maybe or use the SSE one//Go through epochs and learn just like original doLearn
 					super.learnDataSet(trainData, lRate, momentum);//"AdaptNetwork" -> learnDataSet//Learning with trainData
-					System.out.println(doPresent());//Pass the validationData//doPresent//dont need the string here
+					//System.out.println(doPresent());//Pass the validationData//doPresent//dont need the string here
+					doPresent();//Modified to not show all outputs to console (Less work for cpu)
+					//presentDataSet(validationData);//This is what RJM suggests but he has not seen my doPresent, so I'll keep mine which presents info for all three sets (otherwise I only see Training and validation SSE changing but with mine I can see the SSE of the unseen dataset just as extra Info)
 					if (numEpochs<20 || ct % (numEpochs/10) == 0) // print appropriate number of times just like original doLearn
 						s = s + addEpochString(ct+epochsSoFar) + " : Train " + trainData.dataAnalysis() + " : Unseen " + unseenData.dataAnalysis() + " : Valid " + validationData.dataAnalysis() + "\n";//Print to Interface
 //					sumOfSSE = sumOfSSE + validationData.getSSE().get(ct);//Old, needs loop to check through all validationData SSEs
 					lastTenValidationSSE.set((ct-1)%10, validationData.getTotalSSE());//Add the current validationSSE to the arraylist holding the 10 previous SSEs 
 					if (ct % 10 == 0) {//Change this to epochsSoFar maybe?//Checks if the at epoch is a multiple of 10
 						for (int cts = 0; cts < 10; cts++){ //Go through all items in arraylist
-							sumOfSSE = sumOfSSE + lastTenValidationSSE.get(cts);//Sum of previous SSEs
+							sumOfSSE += lastTenValidationSSE.get(cts);//Sum of previous SSEs
 						}
 						sumOfSSEAvg = sumOfSSE/10;//Average of the 10 SSEs
 //						if (previousValidationDataSSE == 0){//If its the first run then just set the average to be equal to the previousSSE then the next if statement shouldn't run
