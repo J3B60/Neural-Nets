@@ -6,6 +6,8 @@ package CS2NN16;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 /**
  * @author shsmchlr
@@ -153,27 +155,56 @@ public class DataSet {
 	public static String GetFile(String name) {
 		String ans = "";
 		BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(name));
-            String line;
-            while ((line = br.readLine()) != null) {
-                line = line.replace("\t", " ");				// replace tabs with spaces
-                if (line.length()>0) { 						// if not empty string
-                    if (ans.length()>0) ans = ans + ";";	// add to answer
-                	ans = ans + line;
-                }	
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (br != null) {
-                    br.close();
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
+		//Added
+		String temp = "/" + name;
+		if (name != "") {
+			InputStream stream = DataSet.class.getResourceAsStream(temp);
+			try {
+	            br = new BufferedReader(new InputStreamReader(stream));
+	            String line;
+	            while ((line = br.readLine()) != null) {
+	                line = line.replace("\t", " ");				// replace tabs with spaces
+	                if (line.length()>0) { 						// if not empty string
+	                    if (ans.length()>0) ans = ans + ";";	// add to answer
+	                	ans = ans + line;
+	                }	
+	            }
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        } finally {
+	            try {
+	                if (br != null) {
+	                    br.close();
+	                }
+	            } catch (IOException ex) {
+	                ex.printStackTrace();
+	            }
+	        }
+		}
+		else {
+		//
+	        try {
+	            br = new BufferedReader(new FileReader(name));
+	            String line;
+	            while ((line = br.readLine()) != null) {
+	                line = line.replace("\t", " ");				// replace tabs with spaces
+	                if (line.length()>0) { 						// if not empty string
+	                    if (ans.length()>0) ans = ans + ";";	// add to answer
+	                	ans = ans + line;
+	                }	
+	            }
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        } finally {
+	            try {
+	                if (br != null) {
+	                    br.close();
+	                }
+	            } catch (IOException ex) {
+	                ex.printStackTrace();
+	            }
+	        }
+		}
         return ans;
     }
 		
